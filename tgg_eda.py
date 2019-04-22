@@ -334,10 +334,10 @@ plt.title("Number of Genres Per Venue as a Function of Number of Events Per Venu
 
 #Pearson correlation between number of events and number of genres per venue, 2017-2019 and 2008-2010 datasets 
 
-event_genre_pval_recent = venue_num_event_num_genre_recent['num_events'].corr(venue_num_event_num_genre_recent['num_genres'], method = 'pearson') 
-event_genre_pval_old = venue_num_event_num_genre_old['num_events'].corr(venue_num_event_num_genre_old['num_genres'], method = 'pearson') 
-print(event_genre_pval_recent) 
-print(event_genre_pval_old) 
+event_genre_corr_recent = venue_num_event_num_genre_recent['num_events'].corr(venue_num_event_num_genre_recent['num_genres'], method = 'pearson') 
+event_genre_corr_old = venue_num_event_num_genre_old['num_events'].corr(venue_num_event_num_genre_old['num_genres'], method = 'pearson') 
+print(event_genre_corr_recent) 
+print(event_genre_corr_old) 
 
 
 # For both the recent and historic data, number of events and number of genres per venue seem to have a strong positive correlation. 
@@ -941,7 +941,7 @@ tokyo_all_category_filtered[tokyo_all_category_filtered['categories_y'] == 'Powe
 # ## Conclusion
 # 
 
-# From the above analyses, it is evident that the rankings of genre tags have shifted over the past decade. The most significant shift occured in 2012-2013, at which time the genre "Indie" declined in appearances, and "Improvised" increased. By contrast, there have been few changes with respect to most active areas (neighborhoods) in Tokyo...but the respective distributions of events per area and the most active venues in those areas are significantly different. 
+# From the above analyses, it is evident that the rankings of genre tags have shifted over the past decade. The most significant shift occurred in 2012-2013, at which time the genre "Indie" declined in appearances, and "Improvised" increased. By contrast, there have been few changes with respect to most active areas (neighborhoods) in Tokyo...but the respective distributions of events per area and the most active venues in those areas are significantly different. 
 # 
 # There is a strong positive correlation between number of events and number of genres represented by a given venue. 
 # 
@@ -962,9 +962,3 @@ tokyo_all_category_filtered[tokyo_all_category_filtered['categories_y'] == 'Powe
 # 
 # 
 # 
-
-# In[ ]:
-
-
-
-
