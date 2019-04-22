@@ -20,7 +20,7 @@
 # 4. Which neighborhoods, venues, and genres have featured the most expensive events? What have been typical price ranges for tickets? 
 # 
 
-# In[139]:
+# In[2]:
 
 
 #dependencies
@@ -35,13 +35,13 @@ from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 import re 
 
 
-# In[4]:
+# In[3]:
 
 
 get_ipython().run_line_magic('matplotlib', 'inline')
 
 
-# In[5]:
+# In[4]:
 
 
 from matplotlib import pyplot as plt
@@ -53,7 +53,7 @@ plt.style.use('ggplot')
 
 # Data segmented into 3 tables: first 100 site pages (representing data from 2017-2019), last 100 pages (data from 2008-2010), and middle 219 pages. The data was batched in this way both to facilitate the scraping process and reduce risks of server or network disruptions, and for the sake of comparisons between recent and historical event data illustrated below. 
 
-# In[338]:
+# In[5]:
 
 
 tokyo_first_100 = pd.read_csv('data/tgg_first_100_pages.csv') 
@@ -61,7 +61,7 @@ tokyo_mid = pd.read_csv('data/tgg_mid_219_pages.csv')
 tokyo_last_100 = pd.read_csv('data/tgg_last_100_pages.csv')  
 
 
-# In[339]:
+# In[6]:
 
 
 """ Convert date strings to datetime representation: """
@@ -76,7 +76,7 @@ tokyo_mid['date'] = pd.to_datetime(tokyo_mid['date'])
 tokyo_last_100 = tokyo_last_100[tokyo_last_100['date'] > '2001/01/01']   
 
 
-# In[346]:
+# In[7]:
 
 
 """Concatenate 3 datasets into 1 for subsequent time series analyses, and write to CSV. """
@@ -90,7 +90,7 @@ tokyo_all.head()
 
 # Postal Data: for subsequent mapping visualization purposes, tokyo_all will be joined with a table of geographic and postal data of the Tokyo area (postal codes and more importanty, latitude/longitude coordinates). 
 
-# In[19]:
+# In[8]:
 
 
 
@@ -109,7 +109,7 @@ tokyo_all_coords.to_csv('data/tgg_all_coords.csv')
 
 # Festival table: extract festival events from tokyo_all table. ('Festival' is a genre category.) 
 
-# In[166]:
+# In[9]:
 
 
 festival_df = tokyo_all[['Festival' in x for x in tokyo_all['category']]].sort_values(by = ['title', 'date']) 
@@ -123,7 +123,7 @@ festival_df.to_csv('data/tokyo_festival_table.csv')
 
 # Events and Venues per geographic area: 
 
-# In[22]:
+# In[10]:
 
 
 
@@ -134,7 +134,7 @@ plt.ylabel('Number of Events')
 plt.title('Number of Events Per Area, 2017-2019') 
 
 
-# In[23]:
+# In[14]:
 
 
 #historic: 
@@ -147,7 +147,7 @@ plt.ylabel('Number of Events')
 
 # Events by venue: 
 
-# In[24]:
+# In[12]:
 
 
 #recent: 
@@ -158,7 +158,7 @@ plt.xlabel('Number of Events')
 plt.ylabel('Venue and Area')
 
 
-# In[26]:
+# In[13]:
 
 
 #historic: 
@@ -166,12 +166,12 @@ plt.ylabel('Venue and Area')
 tokyo_last_100.groupby(['venue', 'area'])['title'].agg('nunique').sort_values(ascending = False).head(20).plot.barh()  
 plt.xlabel('Venue')
 plt.ylabel('Number of Events')
-plt.title('Number of Events Per Venue, 2008-2010') 
+plt.title('Most Active Venues, 2008-2010') 
 
 
-# It appears that for both recent and historic data, Shibuya has by far the most events. It also appears that there is 1 venue with significantly number of events than the others. Could this mean that there are therefore a few venues in top-ranking areas that have presented an overwhelming number of events, or do these areas also feature a dense concentration of venues? 
+# It appears that for both recent and historic data, Shibuya has by far the most events. With the exception of Super Deluxe, the top-ranked venues are entirely different. Furthermore, for the 2008-2010 dataset, Shibuya is weighted to a far greater extent in the distribution than for the 2008-2010 data. It also appears that there is 1 venue with significantly number of events than the others. Could this mean that there are therefore a few venues in top-ranking areas that have presented an overwhelming number of events, or do these areas also feature a dense concentration of venues? 
 
-# In[27]:
+# In[15]:
 
 
 tokyo_area_vs_venue_first_100 = tokyo_first_100.groupby(['area'])['venue'].agg('nunique').sort_values(ascending = False).head(25).plot.bar() 
@@ -180,7 +180,7 @@ plt.ylabel('Number of Venues')
 plt.title('Number of Venues per Area, 2017-2019')
 
 
-# In[28]:
+# In[16]:
 
 
 tokyo_area_vs_venue_last_100 = tokyo_last_100.groupby(['area'])['venue'].agg('nunique').sort_values(ascending = False).head(25).plot.bar() 
@@ -192,7 +192,7 @@ plt.title('Number of Venues per Area, 2008-2010')
 # ## EDA Pt. 2: Genre Category 
 # 
 
-# In[329]:
+# In[17]:
 
 
 """ Genres are in list-of-string format in the original dataset. 
@@ -221,20 +221,20 @@ tokyo_last_100_category = category_sep_df(tokyo_last_100)
     
 
 
-# In[330]:
+# In[18]:
 
 
 tokyo_first_100_category.head(10)
 
 
-# In[59]:
+# In[19]:
 
 
 tokyo_first_100_category = tokyo_first_100_category.drop('categories_x', axis = 1) 
-tokyo_last_100_category = tokyo_last_100_category.drop('categories_x', axis = 1) 
+tokyo_last_100_category = tokyo_last_100_category.drop('categories_x', axis = 1)  
 
 
-# In[311]:
+# In[20]:
 
 
 most_popular_cat_recent = pd.DataFrame({'count': tokyo_first_100_category.groupby('categories_y')['title'].agg('nunique').sort_values(ascending = False).head(25)})
@@ -246,7 +246,7 @@ plt.ylabel('Number of Events')
 plt.title('Number of Events per Genre, 2017-2019') 
 
 
-# In[67]:
+# In[21]:
 
 
 #historic 
@@ -259,7 +259,7 @@ plt.ylabel('Number of Events')
 plt.title('Number of Events Per Genre, 2008-2010')
 
 
-# In[347]:
+# In[22]:
 
 
 tokyo_all_category = category_sep_df(tokyo_all)  
@@ -269,7 +269,7 @@ tokyo_all_category.head()
 # In comparing the 2 above bar plots, there seem to be considerable differences between recent and historic event genre rankings. "Improvised," which is top-ranking for the recent events, is ranked 8th in the historic data. In the 2017-2019 data, "Indie" is ranked 10th, after "Noise." When did this downturn in events tagged as "Indie" and increase in "Improvised"-tagged events occur? 
 # 
 
-# In[352]:
+# In[23]:
 
 
 
@@ -291,7 +291,7 @@ plt.title('Number of Events per Year for Top-Ranking Genres of Recent and Histor
 
 # Venue event vs. genre distributions: is number of events correlated with number of genres represented by a given venue? 
 
-# In[76]:
+# In[24]:
 
 
 #correlation between number of events and number of genres per venue 
@@ -310,7 +310,7 @@ venue_num_event_num_genre_recent = venue_num_event_num_genre_recent[venue_num_ev
 venue_num_event_num_genre_old = venue_num_event_num_genre_old[venue_num_event_num_genre_old['num_events']< 200] 
 
 
-# In[77]:
+# In[25]:
 
 
 #scatterplots of correlation between number of events and number of genres per venue 
@@ -329,7 +329,7 @@ plt.ylabel('Number of Genres of Venue Events')
 plt.title("Number of Genres Per Venue as a Function of Number of Events Per Venue, 2008-2010 (blue) and 2017-2019 (red)")  
 
 
-# In[78]:
+# In[26]:
 
 
 #Pearson correlation between number of events and number of genres per venue, 2017-2019 and 2008-2010 datasets 
@@ -346,33 +346,33 @@ print(event_genre_pval_old)
 
 # To further illustrate differences between typical genre categories of the recent and historic datasets, word clouds for each were generated: 
 
-# In[86]:
+# In[27]:
 
 
 import nltk
 from wordcloud import WordCloud 
 
 
-# In[87]:
+# In[28]:
 
 
 from nltk.corpus import stopwords
 stop = stopwords.words('english')
 
 
-# In[88]:
+# In[29]:
 
 
 from PIL import Image 
 
 
-# In[94]:
+# In[30]:
 
 
 mask1 = np.array(Image.open('jp_flag.jpg')) 
 
 
-# In[109]:
+# In[31]:
 
 
 """word cloud for 2017-2019 dataset:"""
@@ -382,7 +382,7 @@ wc1 = WordCloud(background_color="red", mask = mask1, max_words=2000)
 wc1.generate(' '.join(tokyo_first_100_category['categories_y'])) 
 
 
-# In[110]:
+# In[32]:
 
 
 plt.imshow(wc1, interpolation='bilinear')
@@ -392,7 +392,7 @@ plt.axis("off")
 plt.show()   
 
 
-# In[111]:
+# In[33]:
 
 
 """ From 2008-2010: """
@@ -401,7 +401,7 @@ wc2 = WordCloud(background_color= "blue", mask = mask1, max_words=2000)
 wc2.generate(' '.join(tokyo_last_100_category['categories_y'])) 
 
 
-# In[112]:
+# In[34]:
 
 
 plt.imshow(wc2, interpolation='bilinear')
@@ -411,7 +411,7 @@ plt.axis("off")
 plt.show()  
 
 
-# In[128]:
+# In[35]:
 
 
 """Word cloud for titles, drawn from recent dataset: """
@@ -423,7 +423,7 @@ wc3 = WordCloud(background_color="white",  max_words=4000)
 wc3.generate(' '.join(tokyo_first_100['title']))  
 
 
-# In[129]:
+# In[36]:
 
 
 plt.imshow(wc3, interpolation='bilinear')
@@ -433,7 +433,7 @@ plt.axis("off")
 plt.show() 
 
 
-# In[130]:
+# In[37]:
 
 
 """...and 2008-2010 data: """
@@ -443,7 +443,7 @@ wc4 = WordCloud(background_color="white",  max_words=4000)
 wc4.generate(' '.join(tokyo_last_100['title']))  
 
 
-# In[131]:
+# In[38]:
 
 
 plt.imshow(wc4, interpolation='bilinear')
@@ -458,7 +458,7 @@ plt.show()
 
 # Below are 2 interactive map visualizations, depicting events and venue distribution across the Tokyo area. In the first, each point represents a single venue (size and color relative to number of events); in the second, points represent geographic areas (neighborhoods), size and color relative to number of venues per area. In order to generate these maps, the dataframe containing longitude/latitude coordinates is merged with data aggregated on number of unique events per venue and number of unique venues per area, respectively. 
 
-# In[132]:
+# In[39]:
 
 
 """Dataframe 1: number of events/venue """ 
@@ -489,7 +489,7 @@ def fill_missing_coords (df):
 fill_missing_coords(tokyo_for_map_venue)
 
 
-# In[136]:
+# In[40]:
 
 
 """Dataframe 2: number of venues/area"""
@@ -511,19 +511,20 @@ tokyo_for_map_area.drop_duplicates('area', inplace = True)
 fill_missing_coords(tokyo_for_map_area)  
 
 
-# In[140]:
+# In[41]:
 
 
 init_notebook_mode(connected=True) 
 
 
-# In[141]:
+# In[43]:
 
 
 """map 1: venue distribution map 
    point size/color = number of events/venue """
 
 #mapbox_access_token = mapbox_access_token (to retrieve a token, create Mapbox account)
+
 
 venue_lat = tokyo_for_map_venue.Latitude
 venue_lon = tokyo_for_map_venue.Longitude
@@ -571,13 +572,14 @@ fig = dict(data=data, layout=layout)
 iplot(fig, show_link = True)  
 
 
-# In[142]:
+# In[44]:
 
 
 """map 2: number of venues per area 
    point size = number of events/venue"""
 
 #mapbox_access_token = mapbox_access_token (to retrieve a token, create Mapbox account)
+
 
 area_lat = tokyo_for_map_area.Latitude
 area_lon = tokyo_for_map_area.Longitude
@@ -628,7 +630,7 @@ iplot(fig, show_link = True)
 
 # ## EDA Part 3: Time Series Analyses 
 
-# In[80]:
+# In[45]:
 
 
 """Total number of events by month, between 2008-2019: """
@@ -638,10 +640,10 @@ events_by_month.index = [x.split()[1] for x in events_by_month.index]
 events_by_month.plot.bar() 
 plt.xlabel('Month')
 plt.ylabel('Number of Events')
-plt.title('Total Number of Events by Month')
+plt.title('Total Number of Events by Month') 
 
 
-# In[81]:
+# In[46]:
 
 
 """ Number of events for top 5 genres by month between 2017-2019"""
@@ -652,7 +654,7 @@ tokyo_top_5_genres_num_events = tokyo_top_5_genres_num_events[tokyo_top_5_genres
 tokyo_top_5_genres_num_events.month = [x.split()[1] for x in tokyo_top_5_genres_num_events.month]
 
 
-# In[82]:
+# In[47]:
 
 
 sns.catplot(x = 'month', y = 'num_events', hue = 'category', data =tokyo_top_5_genres_num_events, kind = 'bar', height = 10, palette="Set3")  
@@ -662,7 +664,7 @@ plt.xlabel('Month')
 plt.ylabel('Number of Events')
 
 
-# In[83]:
+# In[48]:
 
 
 """Number of events per month by area (facet)"""
@@ -674,7 +676,7 @@ tokyo_top_5_areas_num_events = tokyo_top_5_areas_num_events[tokyo_top_5_areas_nu
 tokyo_top_5_areas_num_events.month = [x.split()[1] for x in tokyo_top_5_areas_num_events.month]
 
 
-# In[84]:
+# In[49]:
 
 
 sns.catplot(x = 'month', y = 'num_events', hue = 'area', data =tokyo_top_5_areas_num_events, kind = 'bar', height = 10, palette="Set3")  
@@ -686,13 +688,22 @@ plt.ylabel('Number of Events')
 
 # The above plots represent aggregates over the span of a decade (in the first case), or ca. 2.5 years (in the second two). The months of October and November appear to be more active than others. In the next plot, the range of numbers of events for each calendar month between the years 2008-2019 is represented: 
 
-# In[85]:
+# In[51]:
 
 
 #boxplot of events by month to show variance 
 fig, ax = plt.subplots()
 fig.set_size_inches(11.7, 8.27) 
 plt.title('Ranges of Number of Events in Each Calendar Month, 2008-2019')
+
+event_num_by_year = pd.DataFrame({'num_events': tokyo_all.groupby([tokyo_all['date'].dt.year.rename('year'),tokyo_all['date'].dt.month])['title'].agg('count')})
+event_num_by_year.index = event_num_by_year.index.set_names(['year', 'month'])
+event_num_by_year.reset_index(inplace = True)
+month_dict = {1: 'January', 2:'February', 3:'March', 4: 'April', 5: 'May', 6:'June', 7: 'July', 8: 'August', 9:'September', 10: 'October', 11: 'November', 12: 'December'} 
+
+event_num_by_year.month = [month_dict[x] for x in event_num_by_year.month]
+
+
 
 
 sns.boxplot(x = 'month', y = 'num_events', data = event_num_by_year, palette="Set3")
@@ -702,7 +713,7 @@ plt.ylabel('Number of Events')
 
 # Festival histogram: number of festivals between 2008-2019. From the data, it appears that the peak of number of festival events posted to the Tokyo Gig Guide occurred in 2012-2013. 
 
-# In[147]:
+# In[52]:
 
 
 
@@ -720,7 +731,7 @@ plt.title('Number of Festivals Between 2008-2019')
 # While event category (genre) formats are standarized on the Tokyo Gig Guide site, ticket price information is not. There are numerous cases of missing data, and values may include currency (¥/yen/円) or extended text entries. In addition, there are "advanced price" and "door price" categories. Before proceeding further, some standardization (i.e., extracting numerical information and converting to integers) is essential. 
 # 
 
-# In[185]:
+# In[53]:
 
 
 """ argument: string or NaN in dataframe column
@@ -763,37 +774,37 @@ def extract_price(string):
     return int(price)       
 
 
-# In[186]:
+# In[54]:
 
 
 extract_price('donation + five yen')
 
 
-# In[187]:
+# In[55]:
 
 
 extract_price('¥5000')
 
 
-# In[188]:
+# In[56]:
 
 
 extract_price('FREE!')
 
 
-# In[189]:
+# In[57]:
 
 
 extract_price('N/A')
 
 
-# In[190]:
+# In[58]:
 
 
 extract_price('')
 
 
-# In[221]:
+# In[59]:
 
 
 """ arguments: dataframe
@@ -819,13 +830,13 @@ def prepare_price_columns (df):
         
 
 
-# In[361]:
+# In[60]:
 
 
 tokyo_all = prepare_price_columns(tokyo_all)
 
 
-# In[225]:
+# In[61]:
 
 
 tokyo_all.sample(10) 
@@ -833,7 +844,7 @@ tokyo_all.sample(10)
 
 # Average ticket price: 
 
-# In[371]:
+# In[62]:
 
 
 tokyo_all['max_price'].mean() 
@@ -843,7 +854,7 @@ tokyo_all['max_price'].mean()
 # 
 # 
 
-# In[362]:
+# In[63]:
 
 
 fig, ax = plt.subplots()
@@ -862,7 +873,7 @@ plt.ylabel('Price (in JPY)')
 
 # Most expensive shows (venue, title, category, date, and price): 
 
-# In[363]:
+# In[64]:
 
 
 most_expensive_shows = pd.DataFrame(tokyo_all.groupby(['venue', 'title', 'category', 'area']).agg({'max_price': 'max'}).sort_values(by = 'max_price', ascending = False).head(10))
@@ -874,13 +885,13 @@ most_expensive_shows.to_csv('data/most_expensive_shows.csv')
 
 # Range of ticket prices by genre: 
 
-# In[354]:
+# In[65]:
 
 
 tokyo_all_category = prepare_price_columns(tokyo_all_category) 
 
 
-# In[364]:
+# In[66]:
 
 
 tokyo_all_category.groupby('categories_y').agg({'max_price': 'max'}).sort_values(by = 'max_price', ascending = False).head(10).plot.bar()
@@ -889,7 +900,7 @@ plt.ylabel('Maximum price (in JPY)')
 plt.title('Highest Ticket Price by Genre') 
 
 
-# In[358]:
+# In[67]:
 
 
 fig, ax = plt.subplots()
@@ -905,7 +916,7 @@ plt.ylabel('Price (in JPY)')
 
 # It appears that the most expensive shows are outliers for all genres. To gain a more accurate sense of typical price ranges, let's filter out shows with ticket prices above ¥20,000: 
 
-# In[359]:
+# In[68]:
 
 
 fig, ax = plt.subplots()
@@ -921,7 +932,7 @@ plt.ylabel('Price (in JPY)')
 
 # These results are likely due to the number of missing values in the price category...but "Festival" has the greatest spread and IQR, followed by "Power Pop". Here are the stats for Power Pop: 
 
-# In[370]:
+# In[69]:
 
 
 tokyo_all_category_filtered[tokyo_all_category_filtered['categories_y'] == 'Power Pop']['max_price'].describe()   
@@ -930,7 +941,7 @@ tokyo_all_category_filtered[tokyo_all_category_filtered['categories_y'] == 'Powe
 # ## Conclusion
 # 
 
-# From the above analyses, it is evident that the rankings of genre tags have shifted over the past decade. The most significant shift occured in 2012-2013, at which time the genre "Indie" declined in appearances, and "Improvised" increased. By contrast, there have been few changes with respect to most active areas (neighborhoods) in Tokyo. 
+# From the above analyses, it is evident that the rankings of genre tags have shifted over the past decade. The most significant shift occured in 2012-2013, at which time the genre "Indie" declined in appearances, and "Improvised" increased. By contrast, there have been few changes with respect to most active areas (neighborhoods) in Tokyo...but the respective distributions of events per area and the most active venues in those areas are significantly different. 
 # 
 # There is a strong positive correlation between number of events and number of genres represented by a given venue. 
 # 
@@ -942,7 +953,7 @@ tokyo_all_category_filtered[tokyo_all_category_filtered['categories_y'] == 'Powe
 # 
 # The most expensive posted event was a Paul McCartney concert in Kudanshita (¥100,000 = ca. 1000 USD). The average ticket price for the entire dataset was ¥3,211 (ca. 32 USD).  Caveat: given the quantity of missing ticket price data, it impossible to draw solid conclusions in this regard. 
 # 
-# In future, it would be of interest to integrate the Tokyo Gig Guide datasets with other event listing data, and to extend the date range. The analyses encapulsated by this project could be utilised to construct a classification model to predict genre based upon venue, title, date, and (possibly) ticket price variables. 
+# In future, it would be of interest to integrate the Tokyo Gig Guide datasets with other event listing data, to perform more rigorous NLP on event titles, and to extend the date range. The analyses encapulsated by this project could be utilised to construct a classification model to predict genre based upon venue, title, date, and (possibly) ticket price variables. 
 # 
 # 
 # 
@@ -951,3 +962,9 @@ tokyo_all_category_filtered[tokyo_all_category_filtered['categories_y'] == 'Powe
 # 
 # 
 # 
+
+# In[ ]:
+
+
+
+
