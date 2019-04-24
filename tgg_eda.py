@@ -20,7 +20,7 @@
 # 4. Which neighborhoods, venues, and genres have featured the most expensive events? What have been typical price ranges for tickets? 
 # 
 
-# In[2]:
+# In[1]:
 
 
 #dependencies
@@ -35,13 +35,13 @@ from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 import re 
 
 
-# In[3]:
+# In[2]:
 
 
 get_ipython().run_line_magic('matplotlib', 'inline')
 
 
-# In[4]:
+# In[3]:
 
 
 from matplotlib import pyplot as plt
@@ -53,7 +53,7 @@ plt.style.use('ggplot')
 
 # Data segmented into 3 tables: first 100 site pages (representing data from 2017-2019), last 100 pages (data from 2008-2010), and middle 219 pages. The data was batched in this way both to facilitate the scraping process and reduce risks of server or network disruptions, and for the sake of comparisons between recent and historical event data illustrated below. 
 
-# In[5]:
+# In[4]:
 
 
 tokyo_first_100 = pd.read_csv('data/tgg_first_100_pages.csv') 
@@ -61,7 +61,7 @@ tokyo_mid = pd.read_csv('data/tgg_mid_219_pages.csv')
 tokyo_last_100 = pd.read_csv('data/tgg_last_100_pages.csv')  
 
 
-# In[6]:
+# In[5]:
 
 
 """ Convert date strings to datetime representation: """
@@ -76,7 +76,7 @@ tokyo_mid['date'] = pd.to_datetime(tokyo_mid['date'])
 tokyo_last_100 = tokyo_last_100[tokyo_last_100['date'] > '2001/01/01']   
 
 
-# In[7]:
+# In[6]:
 
 
 """Concatenate 3 datasets into 1 for subsequent time series analyses, and write to CSV. """
@@ -90,7 +90,7 @@ tokyo_all.head()
 
 # Postal Data: for subsequent mapping visualization purposes, tokyo_all will be joined with a table of geographic and postal data of the Tokyo area (postal codes and more importanty, latitude/longitude coordinates). 
 
-# In[8]:
+# In[7]:
 
 
 
@@ -109,7 +109,7 @@ tokyo_all_coords.to_csv('data/tgg_all_coords.csv')
 
 # Festival table: extract festival events from tokyo_all table. ('Festival' is a genre category.) 
 
-# In[9]:
+# In[8]:
 
 
 festival_df = tokyo_all[['Festival' in x for x in tokyo_all['category']]].sort_values(by = ['title', 'date']) 
@@ -123,7 +123,7 @@ festival_df.to_csv('data/tokyo_festival_table.csv')
 
 # Events and Venues per geographic area: 
 
-# In[10]:
+# In[9]:
 
 
 
@@ -134,7 +134,7 @@ plt.ylabel('Number of Events')
 plt.title('Number of Events Per Area, 2017-2019') 
 
 
-# In[14]:
+# In[10]:
 
 
 #historic: 
@@ -147,7 +147,7 @@ plt.ylabel('Number of Events')
 
 # Events by venue: 
 
-# In[12]:
+# In[11]:
 
 
 #recent: 
@@ -158,7 +158,7 @@ plt.xlabel('Number of Events')
 plt.ylabel('Venue and Area')
 
 
-# In[13]:
+# In[12]:
 
 
 #historic: 
@@ -171,7 +171,7 @@ plt.title('Most Active Venues, 2008-2010')
 
 # It appears that for both recent and historic data, Shibuya has by far the most events. With the exception of Super Deluxe, the top-ranked venues are entirely different. Furthermore, for the 2008-2010 dataset, Shibuya is weighted to a far greater extent in the distribution than for the 2008-2010 data. It also appears that there is 1 venue with significantly number of events than the others. Could this mean that there are therefore a few venues in top-ranking areas that have presented an overwhelming number of events, or do these areas also feature a dense concentration of venues? 
 
-# In[15]:
+# In[13]:
 
 
 tokyo_area_vs_venue_first_100 = tokyo_first_100.groupby(['area'])['venue'].agg('nunique').sort_values(ascending = False).head(25).plot.bar() 
@@ -180,7 +180,7 @@ plt.ylabel('Number of Venues')
 plt.title('Number of Venues per Area, 2017-2019')
 
 
-# In[16]:
+# In[14]:
 
 
 tokyo_area_vs_venue_last_100 = tokyo_last_100.groupby(['area'])['venue'].agg('nunique').sort_values(ascending = False).head(25).plot.bar() 
@@ -192,7 +192,7 @@ plt.title('Number of Venues per Area, 2008-2010')
 # ## EDA Pt. 2: Genre Category 
 # 
 
-# In[17]:
+# In[15]:
 
 
 """ Genres are in list-of-string format in the original dataset. 
@@ -221,20 +221,20 @@ tokyo_last_100_category = category_sep_df(tokyo_last_100)
     
 
 
-# In[18]:
+# In[16]:
 
 
 tokyo_first_100_category.head(10)
 
 
-# In[19]:
+# In[17]:
 
 
 tokyo_first_100_category = tokyo_first_100_category.drop('categories_x', axis = 1) 
 tokyo_last_100_category = tokyo_last_100_category.drop('categories_x', axis = 1)  
 
 
-# In[20]:
+# In[18]:
 
 
 most_popular_cat_recent = pd.DataFrame({'count': tokyo_first_100_category.groupby('categories_y')['title'].agg('nunique').sort_values(ascending = False).head(25)})
@@ -246,7 +246,7 @@ plt.ylabel('Number of Events')
 plt.title('Number of Events per Genre, 2017-2019') 
 
 
-# In[21]:
+# In[19]:
 
 
 #historic 
@@ -259,7 +259,7 @@ plt.ylabel('Number of Events')
 plt.title('Number of Events Per Genre, 2008-2010')
 
 
-# In[22]:
+# In[20]:
 
 
 tokyo_all_category = category_sep_df(tokyo_all)  
@@ -269,7 +269,7 @@ tokyo_all_category.head()
 # In comparing the 2 above bar plots, there seem to be considerable differences between recent and historic event genre rankings. "Improvised," which is top-ranking for the recent events, is ranked 8th in the historic data. In the 2017-2019 data, "Indie" is ranked 10th, after "Noise." When did this downturn in events tagged as "Indie" and increase in "Improvised"-tagged events occur? 
 # 
 
-# In[23]:
+# In[21]:
 
 
 
@@ -291,7 +291,7 @@ plt.title('Number of Events per Year for Top-Ranking Genres of Recent and Histor
 
 # Venue event vs. genre distributions: is number of events correlated with number of genres represented by a given venue? 
 
-# In[24]:
+# In[22]:
 
 
 #correlation between number of events and number of genres per venue 
@@ -310,7 +310,7 @@ venue_num_event_num_genre_recent = venue_num_event_num_genre_recent[venue_num_ev
 venue_num_event_num_genre_old = venue_num_event_num_genre_old[venue_num_event_num_genre_old['num_events']< 200] 
 
 
-# In[25]:
+# In[23]:
 
 
 #scatterplots of correlation between number of events and number of genres per venue 
@@ -329,7 +329,7 @@ plt.ylabel('Number of Genres of Venue Events')
 plt.title("Number of Genres Per Venue as a Function of Number of Events Per Venue, 2008-2010 (blue) and 2017-2019 (red)")  
 
 
-# In[26]:
+# In[24]:
 
 
 #Pearson correlation between number of events and number of genres per venue, 2017-2019 and 2008-2010 datasets 
@@ -346,33 +346,33 @@ print(event_genre_corr_old)
 
 # To further illustrate differences between typical genre categories of the recent and historic datasets, word clouds for each were generated: 
 
-# In[27]:
+# In[25]:
 
 
 import nltk
 from wordcloud import WordCloud 
 
 
-# In[28]:
+# In[26]:
 
 
 from nltk.corpus import stopwords
 stop = stopwords.words('english')
 
 
-# In[29]:
+# In[27]:
 
 
 from PIL import Image 
 
 
-# In[30]:
+# In[28]:
 
 
 mask1 = np.array(Image.open('jp_flag.jpg')) 
 
 
-# In[31]:
+# In[29]:
 
 
 """word cloud for 2017-2019 dataset:"""
@@ -382,7 +382,7 @@ wc1 = WordCloud(background_color="red", mask = mask1, max_words=2000)
 wc1.generate(' '.join(tokyo_first_100_category['categories_y'])) 
 
 
-# In[32]:
+# In[30]:
 
 
 plt.imshow(wc1, interpolation='bilinear')
@@ -392,7 +392,7 @@ plt.axis("off")
 plt.show()   
 
 
-# In[33]:
+# In[31]:
 
 
 """ From 2008-2010: """
@@ -401,7 +401,7 @@ wc2 = WordCloud(background_color= "blue", mask = mask1, max_words=2000)
 wc2.generate(' '.join(tokyo_last_100_category['categories_y'])) 
 
 
-# In[34]:
+# In[32]:
 
 
 plt.imshow(wc2, interpolation='bilinear')
@@ -411,7 +411,7 @@ plt.axis("off")
 plt.show()  
 
 
-# In[35]:
+# In[33]:
 
 
 """Word cloud for titles, drawn from recent dataset: """
@@ -423,7 +423,7 @@ wc3 = WordCloud(background_color="white",  max_words=4000)
 wc3.generate(' '.join(tokyo_first_100['title']))  
 
 
-# In[36]:
+# In[34]:
 
 
 plt.imshow(wc3, interpolation='bilinear')
@@ -433,7 +433,7 @@ plt.axis("off")
 plt.show() 
 
 
-# In[37]:
+# In[35]:
 
 
 """...and 2008-2010 data: """
@@ -443,7 +443,7 @@ wc4 = WordCloud(background_color="white",  max_words=4000)
 wc4.generate(' '.join(tokyo_last_100['title']))  
 
 
-# In[38]:
+# In[36]:
 
 
 plt.imshow(wc4, interpolation='bilinear')
@@ -458,7 +458,7 @@ plt.show()
 
 # Below are 2 interactive map visualizations, depicting events and venue distribution across the Tokyo area. In the first, each point represents a single venue (size and color relative to number of events); in the second, points represent geographic areas (neighborhoods), size and color relative to number of venues per area. In order to generate these maps, the dataframe containing longitude/latitude coordinates is merged with data aggregated on number of unique events per venue and number of unique venues per area, respectively. 
 
-# In[39]:
+# In[37]:
 
 
 """Dataframe 1: number of events/venue """ 
@@ -489,7 +489,7 @@ def fill_missing_coords (df):
 fill_missing_coords(tokyo_for_map_venue)
 
 
-# In[40]:
+# In[38]:
 
 
 """Dataframe 2: number of venues/area"""
@@ -511,18 +511,19 @@ tokyo_for_map_area.drop_duplicates('area', inplace = True)
 fill_missing_coords(tokyo_for_map_area)  
 
 
-# In[41]:
+# In[39]:
 
 
 init_notebook_mode(connected=True) 
 
 
-# In[43]:
+# In[59]:
 
 
 """map 1: venue distribution map 
    point size/color = number of events/venue """
 
+mapbox_access_token = 'pk.eyJ1IjoiYXRzaWdtYW4iLCJhIjoiY2p1b21qYnFkMWdubzN5bXBuMmV4dzl2biJ9.IIOFi5O_nj_rVbNDYxHvRA'   
 #mapbox_access_token = mapbox_access_token (to retrieve a token, create Mapbox account)
 
 
@@ -530,6 +531,7 @@ venue_lat = tokyo_for_map_venue.Latitude
 venue_lon = tokyo_for_map_venue.Longitude
 venue_locations_name = tokyo_for_map_venue.venue
 num_events =tokyo_for_map_venue.num_events 
+map_text = list(map(lambda x, y: ": ".join([x, str(y)]), venue_locations_name, num_events))
 
 data = [
        go.Scattermapbox(
@@ -546,15 +548,17 @@ data = [
            opacity= 0.4
        ),
        
-       text = venue_locations_name, 
-       hoverinfo= 'text'  
-   )]
+       text = map_text,   
+       hoverinfo= 'text'
+   )] 
+   
+   
        
 layout = go.Layout(
    title='Tokyo Venue Locations (point colors and sizes relative to number of events per venue)',
    autosize=True,
    hovermode='closest',
-   showlegend=False,
+   showlegend = False,
    mapbox=go.layout.Mapbox(
        accesstoken=mapbox_access_token,
        bearing=0,
@@ -565,26 +569,27 @@ layout = go.Layout(
        pitch=0,
        zoom= 11,
        style='light'
-   ),
-)
+     )
+   )
 
 fig = dict(data=data, layout=layout)   
-iplot(fig, show_link = True)  
+iplot(fig, show_link = True)   
 
 
-# In[44]:
+# In[62]:
 
 
 """map 2: number of venues per area 
    point size = number of events/venue"""
 
 #mapbox_access_token = mapbox_access_token (to retrieve a token, create Mapbox account)
-
+mapbox_access_token = 'pk.eyJ1IjoiYXRzaWdtYW4iLCJhIjoiY2p1b21qYnFkMWdubzN5bXBuMmV4dzl2biJ9.IIOFi5O_nj_rVbNDYxHvRA'
 
 area_lat = tokyo_for_map_area.Latitude
 area_lon = tokyo_for_map_area.Longitude
 area_locations_name = tokyo_for_map_area.area 
 num_venues = tokyo_for_map_area.num_venues
+map_text = list(map(lambda x, y: ": ".join([x, str(y)]), area_locations_name, num_venues))
 
 data = [
         go.Scattermapbox(
@@ -601,8 +606,8 @@ data = [
             opacity= 0.4
         ),
         
-        text = area_locations_name, 
-        hoverinfo= 'text'
+        text = map_text,
+        hoverinfo= 'text',
         
     )]
         
