@@ -158,18 +158,18 @@ plt.xlabel('Number of Events')
 plt.ylabel('Venue and Area')
 
 
-# In[12]:
+# In[64]:
 
 
 #historic: 
 
 tokyo_last_100.groupby(['venue', 'area'])['title'].agg('nunique').sort_values(ascending = False).head(20).plot.barh()  
-plt.xlabel('Venue')
-plt.ylabel('Number of Events')
+plt.xlabel('Number of Events')
+plt.ylabel('Venue and Area')
 plt.title('Most Active Venues, 2008-2010') 
 
 
-# It appears that for both recent and historic data, Shibuya has by far the most events. With the exception of Super Deluxe, the top-ranked venues are entirely different. Furthermore, for the 2008-2010 dataset, Shibuya is weighted to a far greater extent in the distribution than for the 2008-2010 data. It also appears that there is 1 venue with significantly number of events than the others. Could this mean that there are therefore a few venues in top-ranking areas that have presented an overwhelming number of events, or do these areas also feature a dense concentration of venues? 
+# It appears that for both recent and historic data, Shibuya has by far the most events. With the exceptions of Super Deluxe and Fever, the top-ranked venues are entirely different. Furthermore, for the 2008-2010 dataset, Shibuya is weighted to a far greater extent in the distribution than for the 2008-2010 data. It also appears that there is 1 venue with significantly number of events than the others. Could this mean that there are therefore a few venues in top-ranking areas that have presented an overwhelming number of events, or do these areas also feature a dense concentration of venues? 
 
 # In[13]:
 
@@ -523,8 +523,7 @@ init_notebook_mode(connected=True)
 """map 1: venue distribution map 
    point size/color = number of events/venue """
 
-mapbox_access_token = 'pk.eyJ1IjoiYXRzaWdtYW4iLCJhIjoiY2p1b21qYnFkMWdubzN5bXBuMmV4dzl2biJ9.IIOFi5O_nj_rVbNDYxHvRA'   
-#mapbox_access_token = mapbox_access_token (to retrieve a token, create Mapbox account)
+  #mapbox_access_token = mapbox_access_token (to retrieve a token, create Mapbox account)
 
 
 venue_lat = tokyo_for_map_venue.Latitude
@@ -583,7 +582,7 @@ iplot(fig, show_link = True)
    point size = number of events/venue"""
 
 #mapbox_access_token = mapbox_access_token (to retrieve a token, create Mapbox account)
-mapbox_access_token = 'pk.eyJ1IjoiYXRzaWdtYW4iLCJhIjoiY2p1b21qYnFkMWdubzN5bXBuMmV4dzl2biJ9.IIOFi5O_nj_rVbNDYxHvRA'
+
 
 area_lat = tokyo_for_map_area.Latitude
 area_lon = tokyo_for_map_area.Longitude
