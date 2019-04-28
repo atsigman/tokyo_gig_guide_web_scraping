@@ -634,7 +634,7 @@ iplot(fig, show_link = True)
 
 # ## EDA Part 3: Time Series Analyses 
 
-# In[45]:
+# In[66]:
 
 
 """Total number of events by month, between 2008-2019: """
@@ -644,7 +644,7 @@ events_by_month.index = [x.split()[1] for x in events_by_month.index]
 events_by_month.plot.bar() 
 plt.xlabel('Month')
 plt.ylabel('Number of Events')
-plt.title('Total Number of Events by Month') 
+plt.title('Total Number of Events by Month')  
 
 
 # In[46]:
@@ -735,7 +735,7 @@ plt.title('Number of Festivals Between 2008-2019')
 # While event category (genre) formats are standarized on the Tokyo Gig Guide site, ticket price information is not. There are numerous cases of missing data, and values may include currency (¥/yen/円) or extended text entries. In addition, there are "advanced price" and "door price" categories. Before proceeding further, some standardization (i.e., extracting numerical information and converting to integers) is essential. 
 # 
 
-# In[53]:
+# In[68]:
 
 
 """ argument: string or NaN in dataframe column
@@ -808,7 +808,7 @@ extract_price('N/A')
 extract_price('')
 
 
-# In[59]:
+# In[69]:
 
 
 """ arguments: dataframe
@@ -834,13 +834,13 @@ def prepare_price_columns (df):
         
 
 
-# In[60]:
+# In[70]:
 
 
 tokyo_all = prepare_price_columns(tokyo_all)
 
 
-# In[61]:
+# In[71]:
 
 
 tokyo_all.sample(10) 
@@ -848,15 +848,30 @@ tokyo_all.sample(10)
 
 # Average ticket price: 
 
-# In[62]:
+# In[75]:
 
 
 tokyo_all['max_price'].mean() 
 
 
+# In[76]:
+
+
+tokyo_all['max_price'].median()
+
+
 # Ticket price ranges for areas with greatest number of venues: 
 # 
 # 
+
+# In[74]:
+
+
+tokyo_all_category.groupby('area').agg({'max_price': 'max'}).sort_values(by = 'max_price', ascending = False).head(10).plot.bar()
+plt.xlabel('Genres')
+plt.ylabel('Maximum price (in JPY)') 
+plt.title('Highest Ticket Price by Area') 
+
 
 # In[63]:
 
@@ -889,7 +904,7 @@ most_expensive_shows.to_csv('data/most_expensive_shows.csv')
 
 # Range of ticket prices by genre: 
 
-# In[65]:
+# In[73]:
 
 
 tokyo_all_category = prepare_price_columns(tokyo_all_category) 
@@ -934,7 +949,7 @@ plt.xlabel('Genre')
 plt.ylabel('Price (in JPY)') 
 
 
-# These results are likely due to the number of missing values in the price category...but "Festival" has the greatest spread and IQR, followed by "Power Pop". Here are the stats for Power Pop: 
+# These results are likely due to the number of missing values in the price category...but "Festival" (which is, strictly speaking, not a unified genre) has the greatest spread and IQR, followed by "Power Pop". Here are the stats for Power Pop: 
 
 # In[69]:
 
@@ -951,13 +966,11 @@ tokyo_all_category_filtered[tokyo_all_category_filtered['categories_y'] == 'Powe
 # 
 # October and November have been the most active months. However, based upon each month's IQR with respect to number of events, there are sizable differences from one year to the next. IQR's for May and August are the narrowest. 
 # 
-# In 2012-2013, the peak number of festivals was recorded. 
+# In 2012, the peak number of festivals was recorded. 
 # 
-# Ticket price seems to be more strongly correlated with genre than geographic area...but ticket prices for several genres (including festivals) vary considerably. 
+# The most expensive posted event was a Paul McCartney concert in Kudanshita (¥100,000 = ca. 1000 USD). The average ticket price for the entire dataset was ¥3,211 (ca. 32 USD). Ticket prices for most events fell under ¥20,000, and there seemed to be no strong correlation between area or genre and price once outliers were filtered out. Caveat: given the quantity of missing ticket price data, it is impossible to draw solid conclusions in this regard. 
 # 
-# The most expensive posted event was a Paul McCartney concert in Kudanshita (¥100,000 = ca. 1000 USD). The average ticket price for the entire dataset was ¥3,211 (ca. 32 USD).  Caveat: given the quantity of missing ticket price data, it impossible to draw solid conclusions in this regard. 
-# 
-# In future, it would be of interest to integrate the Tokyo Gig Guide datasets with other event listing data, to perform more rigorous NLP on event titles, and to extend the date range. The analyses encapulsated by this project could be utilised to construct a classification model to predict genre based upon venue, title, date, and (possibly) ticket price variables. 
+# In future, it would be of interest to integrate the Tokyo Gig Guide datasets with other event listing data, to perform more rigorous NLP on event titles, and to extend the date range. The analyses encapulsated by this project could be utilised to construct a ticket price or genre classification model. 
 # 
 # 
 # 
